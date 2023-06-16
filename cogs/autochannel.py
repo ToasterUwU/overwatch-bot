@@ -134,6 +134,28 @@ class AutoChannel(commands.Cog):
         return False
 
     @commands.Cog.listener()
+    async def on_ready(self):
+        for guild_id in CONFIG["AUTOCHANNEL"]["GUILD_CONFIGS"]:
+            create_channel = await GetOrFetch.channel(
+                self.bot,
+                CONFIG["AUTOCHANNEL"]["GUILD_CONFIGS"][guild_id][
+                    "CREATE_VOICECHANNEL_ID"
+                ],
+            )
+            if isinstance(create_channel, nextcord.VoiceChannel):
+                if create_channel.category:
+                    for sub_channel in create_channel.category.voice_channels:
+                        if (
+                            sub_channel.id
+                            == CONFIG["AUTOCHANNEL"]["GUILD_CONFIGS"][guild_id][
+                                "CREATE_VOICECHANNEL_ID"
+                            ]
+                        ):
+                            continue
+
+                        await sub_channel.delete()
+
+    @commands.Cog.listener()
     async def on_voice_state_update(
         self,
         member: nextcord.Member,
