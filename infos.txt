@@ -1,0 +1,14 @@
+Made by @ToasterUwU ( https://github.com/ToasterUwU )
+
+Based on:
+Akis Discord bot building kit V4.3.0
+
+Features:
+- Easy to extend
+- Easy to maintain
+- Easy to update
+
+Rules:
+- Using this template for making bots yourself without it being open source, is forbidden unless you have asked me and got explicit permission
+- Claiming you made this is forbidden
+- Having a great day is mandatory
