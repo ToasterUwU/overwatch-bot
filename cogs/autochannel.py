@@ -1,13 +1,12 @@
 import datetime
-import os
-import sys
-from typing import Dict, List, Literal, Optional, Union
+from typing import Dict, Union
 
 import nextcord
-from discord import PermissionOverwrite, SlashOption
+from discord import PermissionOverwrite
+from nextcord.ext import commands, tasks
+
 from internal_tools.configuration import CONFIG
 from internal_tools.discord import *
-from nextcord.ext import commands, tasks
 
 
 class OpenVoiceChannel:
