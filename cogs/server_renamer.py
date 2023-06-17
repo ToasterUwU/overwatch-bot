@@ -20,7 +20,7 @@ class ServerRenamer(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         home_guild = await GetOrFetch.guild(
-            self.bot, CONFIG["SERVER_RENAMER"]["HOME_SERVER_ID"]
+            self.bot, CONFIG["GENERAL"]["HOME_SERVER_ID"]
         )
 
         if home_guild:
