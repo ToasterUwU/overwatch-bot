@@ -270,7 +270,7 @@ class AccountLinker(commands.Cog):
 
                 raw_time: str = stats["game"]["timePlayed"]
                 if raw_time.count(":") == 1:
-                    hours = 0
+                    hours = "0"
                     minutes, seconds = raw_time.split(":")
                 elif raw_time.count(":") == 2:
                     hours, minutes, seconds = raw_time.split(":")
