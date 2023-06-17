@@ -1,10 +1,20 @@
-from typing import Optional
+import asyncio
+import datetime
+from typing import Dict
+
+import aiohttp
 import nextcord
 from nextcord.ext import commands, tasks
 from nextcord.interactions import Interaction
 
 from internal_tools.configuration import CONFIG, JsonDictSaver
 from internal_tools.discord import *
+
+
+class HeroClassEnum:
+    DPS = "DPS"
+    SUPPORT = "SUPPORT"
+    TANK = "TANK"
 
 
 class AccountLinkModal(nextcord.ui.Modal):
@@ -30,7 +40,7 @@ class AccountLinkModal(nextcord.ui.Modal):
 
     async def callback(self, interaction: Interaction):
         if interaction.user:
-            self.cog.add_account(
+            success = await self.cog.add_account(
                 interaction.user.id,
                 platform=self.platform,
                 region=self.region,
@@ -38,7 +48,7 @@ class AccountLinkModal(nextcord.ui.Modal):
             )
 
             await interaction.send(
-                f"You are now entered as '{self.account_name_input.value}'",
+                f"You are now entered as '{self.account_name_input.value}'. Adding your Roles was {'NOT successful, this might be a temporary issue, or you might have entered your name wrong or didnt make your profile public yet' if not success else 'successful'}.",
                 ephemeral=True,
             )
         else:
@@ -113,6 +123,7 @@ class AccountLinker(commands.Cog):
         self.bot = bot
 
         self.accounts = JsonDictSaver("linked_accounts")
+        self.overwatch_roles = JsonDictSaver("overwatch_roles")
 
     async def cog_application_command_check(self, interaction: nextcord.Interaction):
         """
@@ -122,27 +133,225 @@ class AccountLinker(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.bot.add_view(AccountLinkMenu(self))
-
         channel = await GetOrFetch.channel(
             self.bot, CONFIG["ACCOUNT_LINKER"]["MENU_CHANNEL_ID"]
         )
-        if isinstance(channel, nextcord.TextChannel):
-            async for msg in channel.history(limit=None):
-                await msg.delete()
+        if isinstance(channel, nextcord.abc.GuildChannel):
+            if isinstance(channel, nextcord.TextChannel):
+                async for msg in channel.history(limit=None):
+                    await msg.delete()
 
-            with open("assets/ACCOUNT_LINKER/link_account.md", "r") as f:
-                content = f.read()
+                with open("assets/ACCOUNT_LINKER/link_account.md", "r") as f:
+                    content = f.read()
 
-            await channel.send(
-                content,
-                file=nextcord.File(
-                    "assets/ACCOUNT_LINKER/social_settings_screenshot.png"
-                ),
-                view=AccountLinkMenu(self),
+                await channel.send(
+                    content,
+                    file=nextcord.File(
+                        "assets/ACCOUNT_LINKER/social_settings_screenshot.png"
+                    ),
+                    view=AccountLinkMenu(self),
+                )
+
+            if len(self.overwatch_roles) == 0:
+                guild = channel.guild
+
+                # Main Roles
+                self.overwatch_roles["MAIN_ROLE_IDS"] = {}
+                for hero, vals in CONFIG["ACCOUNT_LINKER"]["HEROES"].items():
+                    main_role = await guild.create_role(
+                        name=f"{hero} Main",
+                        color=nextcord.Color(int(vals["COLOR"].replace("#", ""), 16)),
+                        hoist=True,
+                        mentionable=True,
+                    )
+
+                    self.overwatch_roles["MAIN_ROLE_IDS"][hero] = main_role.id
+
+                # Top 3 Seperator role
+                top_3_seperator_role = await guild.create_role(
+                    name=CONFIG["ACCOUNT_LINKER"]["SEPERATOR_ROLE_NAMES"][
+                        "TOP_3_USED_HEROES"
+                    ],
+                    color=nextcord.Color(
+                        int(
+                            CONFIG["ACCOUNT_LINKER"]["SEPERATOR_ROLE_COLOR"].replace(
+                                "#", ""
+                            ),
+                            16,
+                        )
+                    ),
+                    hoist=True,
+                    mentionable=True,
+                )
+                self.overwatch_roles[
+                    "TOP_3_SEPERATOR_ROLE_ID"
+                ] = top_3_seperator_role.id
+
+                # Top 3 Hero roles
+                self.overwatch_roles["HERO_ROLE_IDS"] = {}
+                for hero, vals in CONFIG["ACCOUNT_LINKER"]["HEROES"].items():
+                    hero_role = await guild.create_role(
+                        name=f"{hero}",
+                        color=nextcord.Color(int(vals["COLOR"].replace("#", ""), 16)),
+                    )
+
+                    self.overwatch_roles["HERO_ROLE_IDS"][hero] = hero_role.id
+
+                # Other Seperator role
+                other_seperator_role = await guild.create_role(
+                    name=CONFIG["ACCOUNT_LINKER"]["SEPERATOR_ROLE_NAMES"][
+                        "OTHER_INFOS"
+                    ],
+                    color=nextcord.Color(
+                        int(
+                            CONFIG["ACCOUNT_LINKER"]["SEPERATOR_ROLE_COLOR"].replace(
+                                "#", ""
+                            ),
+                            16,
+                        )
+                    ),
+                    hoist=True,
+                    mentionable=True,
+                )
+                self.overwatch_roles[
+                    "OTHER_SEPERATOR_ROLE_ID"
+                ] = other_seperator_role.id
+
+                # Main Class roles
+                self.overwatch_roles["CLASS_ROLE_IDS"] = {}
+                for hero_class, color in CONFIG["ACCOUNT_LINKER"][
+                    "CLASS_ROLES"
+                ].items():
+                    class_role = await guild.create_role(
+                        name=f"{hero_class}",
+                        color=nextcord.Color(int(color.replace("#", ""), 16)),
+                    )
+
+                    self.overwatch_roles["CLASS_ROLE_IDS"][hero_class] = class_role.id
+
+                self.overwatch_roles.save()
+
+        self.update_overwatch_roles.start()
+
+    async def assign_overwatch_roles(
+        self, member: nextcord.Member, platform: str, region: str, account_name: str
+    ):
+        async with aiohttp.ClientSession() as session:
+            try:
+                resp = await session.get(
+                    f"https://ow-api.com/v1/stats/{platform}/{region}/{account_name.replace('#', '-')}/complete"
+                )
+            except:
+                return False
+
+            if not resp.ok:
+                return False
+
+            data = await resp.json()
+            if data["private"]:
+                return False
+
+            played_amounts: Dict[str, datetime.timedelta] = {}
+            class_amounts: Dict[str, datetime.timedelta] = {}
+            for api_hero, stats in data["quickPlayStats"]["careerStats"].items():
+                if api_hero == "allHeroes":
+                    continue
+
+                hero_name = None
+                hero_class = None
+                for hero, vals in CONFIG["ACCOUNT_LINKER"]["HEROES"].items():
+                    if api_hero == vals["API_NAME"]:
+                        hero_name = hero
+                        hero_class = vals["CLASS"]
+                        break
+
+                if not hero_name or not hero_class:
+                    return False
+
+                raw_time = stats["game"]["timePlayed"].split(":")
+                time_amount = datetime.timedelta(
+                    hours=raw_time[0], minutes=raw_time[1], seconds=raw_time[2]
+                )
+
+                played_amounts[hero_name] = time_amount
+
+                if hero_class not in class_amounts:
+                    class_amounts[hero_class] = datetime.timedelta()
+                class_amounts[hero_class] += time_amount
+
+            if len(played_amounts) == 0 or len(class_amounts) == 0:
+                return False
+
+            main_hero = max(played_amounts, key=played_amounts.get)  # type: ignore
+            del played_amounts[main_hero]
+
+            top_3_heroes = []
+            for _ in range(3):
+                if len(played_amounts) == 0:
+                    break
+
+                key = max(played_amounts, key=played_amounts.get)  # type: ignore
+                top_3_heroes.append(key)
+
+                del played_amounts[key]
+
+            most_played_class = max(class_amounts, key=class_amounts.get)  # type: ignore
+
+            roles_to_remove = []
+            roles_to_add = []
+
+            role = await GetOrFetch.role(
+                member.guild, self.overwatch_roles["TOP_3_SEPERATOR_ROLE_ID"]
             )
+            if role:
+                roles_to_add.append(role)
 
-    def add_account(self, user_id: int, platform: str, region: str, account_name: str):
+            role = await GetOrFetch.role(
+                member.guild, self.overwatch_roles["OTHER_SEPERATOR_ROLE_ID"]
+            )
+            if role:
+                roles_to_add.append(role)
+
+            for hero, role_id in self.overwatch_roles["MAIN_ROLE_IDS"].items():
+                role = await GetOrFetch.role(member.guild, role_id)
+                if role:
+                    if main_hero == hero:
+                        if role not in member.roles:
+                            roles_to_add.append(role)
+                    else:
+                        if role in member.roles:
+                            roles_to_remove.append(role)
+
+            for hero, role_id in self.overwatch_roles["HERO_ROLE_IDS"].items():
+                role = await GetOrFetch.role(member.guild, role_id)
+                if role:
+                    if hero in top_3_heroes:
+                        if role not in member.roles:
+                            roles_to_add.append(role)
+                    else:
+                        if role in member.roles:
+                            roles_to_remove.append(role)
+
+            for hero_class, role_id in self.overwatch_roles["CLASS_ROLE_IDS"].items():
+                role = await GetOrFetch.role(member.guild, role_id)
+                if role:
+                    if hero_class == most_played_class:
+                        if role not in member.roles:
+                            roles_to_add.append(role)
+                    else:
+                        if role in member.roles:
+                            roles_to_remove.append(role)
+
+            if len(roles_to_remove) != 0:
+                await member.remove_roles(*roles_to_remove)
+            if len(roles_to_add) != 0:
+                await member.add_roles(*roles_to_add)
+
+            return True
+
+    async def add_account(
+        self, user_id: int, platform: str, region: str, account_name: str
+    ):
         self.accounts[user_id] = {
             "platform": platform,
             "region": region,
@@ -151,9 +360,61 @@ class AccountLinker(commands.Cog):
 
         self.accounts.save()
 
-    @tasks.loop(hours=12)
+        home_guild = await GetOrFetch.guild(
+            self.bot, CONFIG["GENERAL"]["HOME_SERVER_ID"]
+        )
+        if home_guild:
+            member = await GetOrFetch.member(home_guild, user_id)
+            if member:
+                return await self.assign_overwatch_roles(
+                    member, platform, region, account_name
+                )
+
+        return False
+
+    @tasks.loop(hours=24)
     async def update_overwatch_roles(self):
-        ...
+        home_guild = await GetOrFetch.guild(
+            self.bot, CONFIG["GENERAL"]["HOME_SERVER_ID"]
+        )
+        if home_guild:
+            for user_id, vals in self.accounts.items():
+                member = await GetOrFetch.member(home_guild, user_id)
+                if member:
+                    await self.assign_overwatch_roles(
+                        member, vals["platform"], vals["region"], vals["account_name"]
+                    )
+                    await asyncio.sleep(60)
+
+    @update_overwatch_roles.error
+    async def restart_update_overwatch_roles(self, *args):
+        await asyncio.sleep(10)
+
+        self.update_overwatch_roles.restart()
+
+    @nextcord.slash_command(
+        "clean-overwatch-roles",
+        default_member_permissions=nextcord.Permissions(administrator=True),
+        dm_permission=False,
+    )
+    async def clean_overwatch_roles(self, interaction: nextcord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+
+        guild = interaction.guild
+
+        if guild:
+            name_list = [hero for hero in CONFIG["ACCOUNT_LINKER"]["HEROES"]]
+            name_list.extend(CONFIG["ACCOUNT_LINKER"]["CLASS_ROLES"])
+            name_list.extend(CONFIG["ACCOUNT_LINKER"]["SEPERATOR_ROLE_NAMES"].values())
+
+            for r in guild.roles:
+                if r.name.replace(" Main", "") in name_list:
+                    await r.delete(reason="Cleaning Overwatch Roles")
+
+            self.overwatch_roles.clear()
+            self.overwatch_roles.save()
+
+        await interaction.send("Done.", ephemeral=True)
 
 
 async def setup(bot):

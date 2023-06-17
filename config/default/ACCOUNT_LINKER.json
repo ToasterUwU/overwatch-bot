@@ -1,3 +1,200 @@
 {
-  "MENU_CHANNEL_ID": 1119247951844343899
+  "MENU_CHANNEL_ID": 1119247951844343899,
+  "SEPERATOR_ROLE_COLOR": "#2c2f33",
+  "SEPERATOR_ROLE_NAMES": {
+    "TOP_3_USED_HEROES": "▬▬▬▬▬▬▬▬ TOP 3 ▬▬▬▬▬▬▬▬",
+    "OTHER_INFOS": "▬▬▬▬▬▬▬▬ OTHER ▬▬▬▬▬▬▬▬"
+  },
+  "CLASS_ROLES": {
+    "SUPPORT": "#50c900",
+    "DPS": "#c90000",
+    "TANK": "#004fc9"
+  },
+  "HEROES": {
+    "ANA": {
+      "COLOR": "#48699e",
+      "CLASS": "SUPPORT",
+      "API_NAME": "ana"
+    },
+    "BASTION": {
+      "COLOR": "#5b7351",
+      "CLASS": "DPS",
+      "API_NAME": "bastion"
+    },
+    "BRIGITTE": {
+      "COLOR": "#72332a",
+      "CLASS": "SUPPORT",
+      "API_NAME": "brigitte"
+    },
+    "D.VA": {
+      "COLOR": "#fc79bd",
+      "CLASS": "TANK",
+      "API_NAME": "dVa"
+    },
+    "DOOMFIST": {
+      "COLOR": "#815049",
+      "CLASS": "TANK",
+      "API_NAME": "doomfist"
+    },
+    "GENJI": {
+      "COLOR": "#80fb00",
+      "CLASS": "DPS",
+      "API_NAME": "genji"
+    },
+    "HANZO": {
+      "COLOR": "#b2a865",
+      "CLASS": "DPS",
+      "API_NAME": "hanzo"
+    },
+    "JUNKRAT": {
+      "COLOR": "#f7b217",
+      "CLASS": "DPS",
+      "API_NAME": "junkrat"
+    },
+    "LUCIO": {
+      "COLOR": "#67c519",
+      "CLASS": "SUPPORT",
+      "API_NAME": "lucio"
+    },
+    "CASSIDY": {
+      "COLOR": "#a62927",
+      "CLASS": "DPS",
+      "API_NAME": "cassidy"
+    },
+    "MEI": {
+      "COLOR": "#469af0",
+      "CLASS": "DPS",
+      "API_NAME": "mei"
+    },
+    "MERCY": {
+      "COLOR": "#f2f2ad",
+      "CLASS": "SUPPORT",
+      "API_NAME": "mercy"
+    },
+    "MOIRA": {
+      "COLOR": "#804be5",
+      "CLASS": "SUPPORT",
+      "API_NAME": "moira"
+    },
+    "ORISA": {
+      "COLOR": "#106f04",
+      "CLASS": "TANK",
+      "API_NAME": "orisa"
+    },
+    "PHARAH": {
+      "COLOR": "#58bcff",
+      "CLASS": "DPS",
+      "API_NAME": "pharah"
+    },
+    "REAPER": {
+      "COLOR": "#5e001a",
+      "CLASS": "DPS",
+      "API_NAME": "reaper"
+    },
+    "REINHARDT": {
+      "COLOR": "#7c8b8c",
+      "CLASS": "TANK",
+      "API_NAME": "reinhardt"
+    },
+    "ROADHOG": {
+      "COLOR": "#ae6f1c",
+      "CLASS": "TANK",
+      "API_NAME": "roadhog"
+    },
+    "SOLDIER: 76": {
+      "COLOR": "#445275",
+      "CLASS": "DPS",
+      "API_NAME": "soldier76"
+    },
+    "SOMBRA": {
+      "COLOR": "#5128a9",
+      "CLASS": "DPS",
+      "API_NAME": "sombra"
+    },
+    "SYMMETRA": {
+      "COLOR": "#76b4c9",
+      "CLASS": "DPS",
+      "API_NAME": "symmetra"
+    },
+    "TORBJÖRN": {
+      "COLOR": "#ba4c3f",
+      "CLASS": "DPS",
+      "API_NAME": "torbjorn"
+    },
+    "TRACER": {
+      "COLOR": "#de7a00",
+      "CLASS": "DPS",
+      "API_NAME": "tracer"
+    },
+    "WIDOWMAKER": {
+      "COLOR": "#8b3f8f",
+      "CLASS": "DPS",
+      "API_NAME": "widowmaker"
+    },
+    "WINSTON": {
+      "COLOR": "#8f92ae",
+      "CLASS": "TANK",
+      "API_NAME": "winston"
+    },
+    "ZARYA": {
+      "COLOR": "#f65ea6",
+      "CLASS": "TANK",
+      "API_NAME": "zarya"
+    },
+    "ZENYATTA": {
+      "COLOR": "#fcee5a",
+      "CLASS": "SUPPORT",
+      "API_NAME": "zenyatta"
+    },
+    "KIRIKO": {
+      "COLOR": "#d04656",
+      "CLASS": "SUPPORT",
+      "API_NAME": "kiriko"
+    },
+    "LIFEWEAVER": {
+      "COLOR": "#e1a5ba",
+      "CLASS": "SUPPORT",
+      "API_NAME": "lifeweaver"
+    },
+    "SOJOURN": {
+      "COLOR": "#d73e2c",
+      "CLASS": "DPS",
+      "API_NAME": "sojourn"
+    },
+    "ASHE": {
+      "COLOR": "#3e3c3a",
+      "CLASS": "DPS",
+      "API_NAME": "ashe"
+    },
+    "ECHO": {
+      "COLOR": "#89c8ff",
+      "CLASS": "DPS",
+      "API_NAME": "echo"
+    },
+    "BAPTISTE": {
+      "COLOR": "#28a5c3",
+      "CLASS": "SUPPORT",
+      "API_NAME": "baptiste"
+    },
+    "RAMATTRA": {
+      "COLOR": "#7d55c7",
+      "CLASS": "TANK",
+      "API_NAME": "ramattra"
+    },
+    "JUNKER QUEEN": {
+      "COLOR": "#579fcf",
+      "CLASS": "TANK",
+      "API_NAME": "junkerQueen"
+    },
+    "SIGMA": {
+      "COLOR": "#7c8b8c",
+      "CLASS": "TANK",
+      "API_NAME": "sigma"
+    },
+    "WRECKING BALL": {
+      "COLOR": "#e2790a",
+      "CLASS": "TANK",
+      "API_NAME": "wreckingBall"
+    }
+  }
 }
