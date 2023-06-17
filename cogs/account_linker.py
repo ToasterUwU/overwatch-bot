@@ -268,9 +268,17 @@ class AccountLinker(commands.Cog):
                 if not hero_name or not hero_class:
                     return False
 
-                raw_time = stats["game"]["timePlayed"].split(":")
+                raw_time: str = stats["game"]["timePlayed"]
+                if raw_time.count(":") == 1:
+                    hours = 0
+                    minutes, seconds = raw_time.split(":")
+                elif raw_time.count(":") == 2:
+                    hours, minutes, seconds = raw_time.split(":")
+                else:
+                    return False
+
                 time_amount = datetime.timedelta(
-                    hours=raw_time[0], minutes=raw_time[1], seconds=raw_time[2]
+                    hours=int(hours), minutes=int(minutes), seconds=int(seconds)
                 )
 
                 played_amounts[hero_name] = time_amount
