@@ -388,7 +388,7 @@ class AccountLinker(commands.Cog):
 
         return False
 
-    @tasks.loop(hours=24)
+    @tasks.loop(hours=12)
     async def update_overwatch_roles(self):
         home_guild = await GetOrFetch.guild(
             self.bot, CONFIG["GENERAL"]["HOME_SERVER_ID"]
