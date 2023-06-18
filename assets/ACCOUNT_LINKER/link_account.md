@@ -6,6 +6,8 @@ Before you start using the Bot, you need to make sure your profile is public so 
 You can do this by opening Overwatch, going to your Settings, finding the "Social" Tab, and then setting the "Career Profile Visibility" setting to "Public".
 I attached an example Screenshot.
 
+**NOTE:** It can take up to an hour for the Overwatch Servers to know you set your profile to public. I can't do anything about this.
+
 ## Telling the Bot who you are
 
 1. Select the Platform you play on from the first Dropdown

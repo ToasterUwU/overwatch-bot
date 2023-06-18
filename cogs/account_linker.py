@@ -47,8 +47,14 @@ class AccountLinkModal(nextcord.ui.Modal):
                 account_name=self.account_name_input.value,  # type: ignore
             )
 
+            text = f"You are now entered as '{self.account_name_input.value}'."
+            if success:
+                text += "Adding your Roles was successful."
+            else:
+                text += "Adding your Roles was NOT successful, this might be a temporary issue, or you might have entered your name wrong or didnt make your profile public yet.\nRemember that the servers can take up to an hour to notice you setting your profile to public.\nYou DONT have to retry adding your name (if you selected the right one), since the Bot saves it and will automatically retry later."
+
             await interaction.send(
-                f"You are now entered as '{self.account_name_input.value}'. Adding your Roles was {'NOT successful, this might be a temporary issue, or you might have entered your name wrong or didnt make your profile public yet' if not success else 'successful'}.",
+                text,
                 ephemeral=True,
             )
         else:
