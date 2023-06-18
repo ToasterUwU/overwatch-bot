@@ -10,6 +10,21 @@ from nextcord.interactions import Interaction
 from internal_tools.configuration import CONFIG, JsonDictSaver
 from internal_tools.discord import *
 
+PLATFORM_ROUTER = {
+    "PC": "pc",
+    "Playstation": "psn",
+    "XBox": "xbl",
+    "Nintendo Switch": "nintendo-switch",
+}
+PLATFORM_ROUTER_REVERSE = {v: k for k, v in PLATFORM_ROUTER.items()}
+
+REGION_ROUTER = {
+    "Europe": "eu",
+    "USA": "us",
+    "Asia": "asia",
+}
+REGION_ROUTER_REVERSE = {v: k for k, v in REGION_ROUTER.items()}
+
 
 class HeroClassEnum:
     DPS = "DPS"
@@ -47,11 +62,11 @@ class AccountLinkModal(nextcord.ui.Modal):
                 account_name=self.account_name_input.value,  # type: ignore
             )
 
-            text = f"You are now entered as '{self.account_name_input.value}'."
+            text = f"You are now entered as '{self.account_name_input.value}' ( Platform: {PLATFORM_ROUTER_REVERSE[self.platform]}, Region: {REGION_ROUTER_REVERSE[self.region]} ). "
             if success:
                 text += "Adding your Roles was successful."
             else:
-                text += "Adding your Roles was NOT successful, this might be a temporary issue, or you might have entered your name wrong or didnt make your profile public yet.\nRemember that the servers can take up to an hour to notice you setting your profile to public.\nYou DONT have to retry adding your name (if you selected the right one), since the Bot saves it and will automatically retry later."
+                text += "\nAdding your Roles was NOT successful, this might be a temporary issue, or you might have entered your name wrong or didnt make your profile public yet.\nRemember that the servers can take up to an hour to notice you setting your profile to public.\nYou DONT have to retry adding your name (if you selected the right one), since the Bot saves it and will automatically retry later."
 
             await interaction.send(
                 text,
@@ -79,12 +94,7 @@ class AccountLinkMenu(nextcord.ui.View):
             max_values=1,
             options=[
                 nextcord.SelectOption(label=key, value=val)
-                for key, val in {
-                    "PC": "pc",
-                    "Playstation": "psn",
-                    "XBox": "xbl",
-                    "Nintendo Switch": "nintendo-switch",
-                }.items()
+                for key, val in PLATFORM_ROUTER.items()
             ],
         )
         self.add_item(self.platform_select)
@@ -97,11 +107,7 @@ class AccountLinkMenu(nextcord.ui.View):
             max_values=1,
             options=[
                 nextcord.SelectOption(label=key, value=val)
-                for key, val in {
-                    "Europe": "eu",
-                    "USA": "us",
-                    "Asia": "asia",
-                }.items()
+                for key, val in REGION_ROUTER.items()
             ],
         )
         self.add_item(self.region_select)
