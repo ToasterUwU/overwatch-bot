@@ -231,7 +231,7 @@ class AccountLinker(commands.Cog):
 
                 self.overwatch_roles.save()
 
-        # self.update_overwatch_roles.start()
+        self.update_overwatch_roles.start()
 
     async def assign_overwatch_roles(
         self, member: nextcord.Member, platform: str, region: str, account_name: str
