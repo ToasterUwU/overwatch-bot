@@ -394,7 +394,7 @@ class AccountLinker(commands.Cog):
                     await self.assign_overwatch_roles(
                         member, vals["platform"], vals["region"], vals["account_name"]
                     )
-                    # await asyncio.sleep(60)
+                    await asyncio.sleep(60)
 
     @update_overwatch_roles.error
     async def restart_update_overwatch_roles(self, *args):
