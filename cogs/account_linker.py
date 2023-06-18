@@ -231,7 +231,7 @@ class AccountLinker(commands.Cog):
 
                 self.overwatch_roles.save()
 
-        self.update_overwatch_roles.start()
+        # self.update_overwatch_roles.start()
 
     async def assign_overwatch_roles(
         self, member: nextcord.Member, platform: str, region: str, account_name: str
@@ -312,13 +312,15 @@ class AccountLinker(commands.Cog):
                 member.guild, self.overwatch_roles["TOP_3_SEPERATOR_ROLE_ID"]
             )
             if role:
-                roles_to_add.append(role)
+                if role not in member.roles:
+                    roles_to_add.append(role)
 
             role = await GetOrFetch.role(
                 member.guild, self.overwatch_roles["OTHER_SEPERATOR_ROLE_ID"]
             )
             if role:
-                roles_to_add.append(role)
+                if role not in member.roles:
+                    roles_to_add.append(role)
 
             for hero, role_id in self.overwatch_roles["MAIN_ROLE_IDS"].items():
                 role = await GetOrFetch.role(member.guild, role_id)
@@ -392,7 +394,7 @@ class AccountLinker(commands.Cog):
                     await self.assign_overwatch_roles(
                         member, vals["platform"], vals["region"], vals["account_name"]
                     )
-                    await asyncio.sleep(60)
+                    # await asyncio.sleep(60)
 
     @update_overwatch_roles.error
     async def restart_update_overwatch_roles(self, *args):
