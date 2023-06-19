@@ -265,39 +265,42 @@ class AccountLinker(commands.Cog):
 
             played_amounts: Dict[str, datetime.timedelta] = {}
             class_amounts: Dict[str, datetime.timedelta] = {}
-            for api_hero, stats in data["quickPlayStats"]["careerStats"].items():
-                if api_hero == "allHeroes":
-                    continue
+            for gamemode_stats in ["competitiveStats", "quickPlayStats"]:
+                for api_hero, stats in data[gamemode_stats]["careerStats"].items():
+                    if api_hero == "allHeroes":
+                        continue
 
-                hero_name = None
-                hero_class = None
-                for hero, vals in CONFIG["ACCOUNT_LINKER"]["HEROES"].items():
-                    if api_hero == vals["API_NAME"]:
-                        hero_name = hero
-                        hero_class = vals["CLASS"]
-                        break
+                    hero_name = None
+                    hero_class = None
+                    for hero, vals in CONFIG["ACCOUNT_LINKER"]["HEROES"].items():
+                        if api_hero == vals["API_NAME"]:
+                            hero_name = hero
+                            hero_class = vals["CLASS"]
+                            break
 
-                if not hero_name or not hero_class:
-                    return False
+                    if not hero_name or not hero_class:
+                        return False
 
-                raw_time: str = stats["game"]["timePlayed"]
-                if raw_time.count(":") == 1:
-                    hours = "0"
-                    minutes, seconds = raw_time.split(":")
-                elif raw_time.count(":") == 2:
-                    hours, minutes, seconds = raw_time.split(":")
-                else:
-                    return False
+                    raw_time: str = stats["game"]["timePlayed"]
+                    if raw_time.count(":") == 1:
+                        hours = "0"
+                        minutes, seconds = raw_time.split(":")
+                    elif raw_time.count(":") == 2:
+                        hours, minutes, seconds = raw_time.split(":")
+                    else:
+                        return False
 
-                time_amount = datetime.timedelta(
-                    hours=int(hours), minutes=int(minutes), seconds=int(seconds)
-                )
+                    time_amount = datetime.timedelta(
+                        hours=int(hours), minutes=int(minutes), seconds=int(seconds)
+                    )
 
-                played_amounts[hero_name] = time_amount
+                    if hero_name not in played_amounts:
+                        played_amounts[hero_name] = datetime.timedelta()
+                    played_amounts[hero_name] += time_amount
 
-                if hero_class not in class_amounts:
-                    class_amounts[hero_class] = datetime.timedelta()
-                class_amounts[hero_class] += time_amount
+                    if hero_class not in class_amounts:
+                        class_amounts[hero_class] = datetime.timedelta()
+                    class_amounts[hero_class] += time_amount
 
             if len(played_amounts) == 0 or len(class_amounts) == 0:
                 return False
