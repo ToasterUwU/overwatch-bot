@@ -164,6 +164,9 @@ class AutoChannel(commands.Cog):
     ):
         # If guild was setup
         if member.guild.id in CONFIG["AUTOCHANNEL"]["GUILD_CONFIGS"]:
+            if before.channel == after.channel:
+                return
+
             # If user left a voicechannel, and that channel is a open channel and nobody is in there anymore -> Shedule for deletion
             if before.channel:
                 if before.channel.id in self.open_channels:
