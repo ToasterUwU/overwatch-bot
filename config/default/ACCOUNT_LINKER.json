@@ -11,7 +11,7 @@
     "TANK": "#004fc9"
   },
   "HEROES": {
-    "Illari": {
+    "ILLARI": {
       "COLOR": "#94682e",
       "CLASS": "SUPPORT",
       "API_NAME": "illari"
