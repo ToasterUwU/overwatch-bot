@@ -445,7 +445,7 @@ class AccountLinker(commands.Cog):
         account_name = self.accounts[member.id]["account_name"]
 
         await interaction.send(
-            f"Profile with all Stats: https://overwatch.blizzard.com/en-us/career/{account_name.replace('#', '-')}/",
+            f"{account_name}'s Profile with all Stats: https://overwatch.blizzard.com/en-us/career/{account_name.replace('#', '-')}/",
             ephemeral=True,
         )
 
