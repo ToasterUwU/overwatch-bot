@@ -54,28 +54,42 @@ class AccountLinkModal(nextcord.ui.Modal):
         self.add_item(self.account_name_input)
 
     async def callback(self, interaction: Interaction):
-        if interaction.user:
-            success = await self.cog.add_account(
-                interaction.user.id,
-                platform=self.platform,
-                region=self.region,
-                account_name=self.account_name_input.value,  # type: ignore
-            )
-
-            text = f"You are now entered as '{self.account_name_input.value}' ( Platform: {PLATFORM_ROUTER_REVERSE[self.platform]}, Region: {REGION_ROUTER_REVERSE[self.region]} ). "
-            if success:
-                text += "Adding your Roles was successful."
-            else:
-                text += "\nAdding your Roles was NOT successful, this might be a temporary issue, or you might have entered your name wrong or didnt make your profile public yet.\nRemember that the servers can take up to an hour to notice you setting your profile to public.\nYou DONT have to retry adding your name (if you selected the right one), since the Bot saves it and will automatically retry later."
-
-            await interaction.send(
-                text,
-                ephemeral=True,
-            )
-        else:
+        if not interaction.user:
             await interaction.send(
                 "Something went wrong, please try again.", ephemeral=True
             )
+            return
+
+        if self.account_name_input.value.count("#") != 1 or not self.account_name_input.value.split("#")[1].isnumeric():  # type: ignore
+            await interaction.send(
+                "You forgot to add the # + numbers part, or you put too many of them.\n"
+                "Enter your full name, make sure the capitalization is right and that you include all numbers.\n\n"
+                "Example:\n"
+                "- ToasterUwU#8527 - Correct\n"
+                "- ToasterUwU8527 - Wrong\n"
+                "- ToasterUwU - Wrong\n"
+                "- toasteruwu#8527 - Wrong\n",
+                ephemeral=True,
+            )
+            return
+
+        success = await self.cog.add_account(
+            interaction.user.id,
+            platform=self.platform,
+            region=self.region,
+            account_name=self.account_name_input.value,  # type: ignore
+        )
+
+        text = f"You are now entered as '{self.account_name_input.value}' ( Platform: {PLATFORM_ROUTER_REVERSE[self.platform]}, Region: {REGION_ROUTER_REVERSE[self.region]} ). "
+        if success:
+            text += "Adding your Roles was successful."
+        else:
+            text += "\nAdding your Roles was NOT successful, this might be a temporary issue, or you might have entered your name wrong or didnt make your profile public yet.\nRemember that the servers can take up to an hour to notice you setting your profile to public.\nYou DONT have to retry adding your name (if you selected the right one), since the Bot saves it and will automatically retry later."
+
+        await interaction.send(
+            text,
+            ephemeral=True,
+        )
 
         self.stop()
 
