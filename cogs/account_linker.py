@@ -74,7 +74,7 @@ class AccountLinkModal(nextcord.ui.Modal):
             return
 
         success = await self.cog.add_account(
-            interaction.user.id,
+            user_id=interaction.user.id,
             platform=self.platform,
             region=self.region,
             account_name=self.account_name_input.value,  # type: ignore
@@ -431,7 +431,7 @@ class AccountLinker(commands.Cog):
 
         self.update_overwatch_roles.restart()
 
-    @nextcord.user_command("See Overwatch Profile", dm_permission=False)
+    @nextcord.user_command("Overwatch Profile", dm_permission=False)
     async def see_overwatch_profile(
         self, interaction: nextcord.Interaction, member: nextcord.Member
     ):
