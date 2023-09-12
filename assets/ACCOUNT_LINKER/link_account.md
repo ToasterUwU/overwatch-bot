@@ -13,7 +13,7 @@ I attached an example Screenshot.
 1. Select the Platform you play on from the first Dropdown
 2. Select the Region Server you connect to from the second one
 3. Press the Button
-4. Enter your name in the Popup window
+4. Enter your name in the Popup window (With #, numbers, and correct capitalization)
 5. Press the Popup windows button to confirm
 
 # What are the automatic Overwatch Roles?
