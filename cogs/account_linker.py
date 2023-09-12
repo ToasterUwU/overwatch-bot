@@ -431,6 +431,24 @@ class AccountLinker(commands.Cog):
 
         self.update_overwatch_roles.restart()
 
+    @nextcord.user_command("See Overwatch Profile", dm_permission=False)
+    async def see_overwatch_profile(
+        self, interaction: nextcord.Interaction, member: nextcord.Member
+    ):
+        if member.id not in self.accounts:
+            await interaction.send(
+                "That User has not connected their Profile with this Bot.",
+                ephemeral=True,
+            )
+            return
+
+        account_name = self.accounts[member.id]["account_name"]
+
+        await interaction.send(
+            f"Profile with all Stats: https://overwatch.blizzard.com/en-us/career/{account_name.replace('#', '-')}/",
+            ephemeral=True,
+        )
+
     @nextcord.slash_command(
         "clean-overwatch-roles",
         default_member_permissions=nextcord.Permissions(administrator=True),
