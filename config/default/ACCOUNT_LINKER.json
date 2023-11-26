@@ -11,6 +11,11 @@
     "TANK": "#004fc9"
   },
   "HEROES": {
+    "MAUGA": {
+      "COLOR": "#b57015",
+      "CLASS": "TANK",
+      "API_NAME": "mauga"
+    },
     "ILLARI": {
       "COLOR": "#94682e",
       "CLASS": "SUPPORT",

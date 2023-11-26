@@ -9,6 +9,7 @@ from nextcord.interactions import Interaction
 
 from internal_tools.configuration import CONFIG, JsonDictSaver
 from internal_tools.discord import *
+from internal_tools.general import error_webhook_send
 
 PLATFORM_ROUTER = {
     "PC": "pc",
@@ -282,6 +283,13 @@ class AccountLinker(commands.Cog):
             for gamemode_stats in ["competitiveStats", "quickPlayStats"]:
                 for api_hero, stats in data[gamemode_stats]["careerStats"].items():
                     if api_hero == "allHeroes":
+                        continue
+
+                    if api_hero not in [
+                        x["API_NAME"]
+                        for x in CONFIG["ACCOUNT_LINKER"]["HEROES"].values()
+                    ]:
+                        await error_webhook_send(f"Unknown Hero `{api_hero}` from API")
                         continue
 
                     hero_name = None
