@@ -276,6 +276,16 @@ class AccountLinker(commands.Cog):
 
             data = await resp.json()
             if data["private"]:
+                try:
+                    await member.send(
+                        "Hello, i tried to fetch your Career Profile to assign you the roles you should have,"
+                        " but your Career Profile is private at the moment.\n"
+                        "Please make it public again,"
+                        " or ask Aki to remove your data from my database so that i wont try to do this again."
+                    )
+                except:
+                    pass
+
                 return False
 
             played_amounts: Dict[str, datetime.timedelta] = {}
