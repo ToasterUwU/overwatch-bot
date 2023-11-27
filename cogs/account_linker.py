@@ -151,6 +151,10 @@ class AccountLinker(commands.Cog):
 
         self.accounts = JsonDictSaver("linked_accounts")
         self.overwatch_roles = JsonDictSaver("overwatch_roles")
+        self.notifications = JsonDictSaver(
+            "notifications",
+            default={"CAREER_PROFILE_PRIVATE": {}},
+        )
 
     async def cog_application_command_check(self, interaction: nextcord.Interaction):
         """
@@ -276,15 +280,26 @@ class AccountLinker(commands.Cog):
 
             data = await resp.json()
             if data["private"]:
-                try:
-                    await member.send(
-                        "Hello, i tried to fetch your Career Profile to assign you the roles you should have,"
-                        " but your Career Profile is private at the moment.\n"
-                        "Please make it public again,"
-                        " or ask Aki to remove your data from my database so that i wont try to do this again."
+                today = datetime.datetime.utcnow()
+                if (
+                    member.id in self.notifications["CAREER_PROFILE_PRIVATE"]
+                    and today
+                    - datetime.datetime.fromisoformat(
+                        self.notifications["CAREER_PROFILE_PRIVATE"][member.id]
                     )
-                except:
-                    pass
+                    > datetime.timedelta(days=3)
+                ) or member.id not in self.notifications["CAREER_PROFILE_PRIVATE"]:
+                    try:
+                        await member.send(
+                            "Hello, i tried to fetch your Career Profile to assign you the roles you should have,"
+                            " but your Career Profile is private at the moment.\n"
+                            "Please make it public again,"
+                            " or ask Aki to remove your data from my database so that i wont try to do this again."
+                        )
+                        self.notifications["CAREER_PROFILE_PRIVATE"][member.id] = today.isoformat()
+                        self.notifications.save()
+                    except:
+                        pass
 
                 return False
 
