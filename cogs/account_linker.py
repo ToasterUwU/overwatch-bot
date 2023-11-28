@@ -153,7 +153,7 @@ class AccountLinker(commands.Cog):
         self.overwatch_roles = JsonDictSaver("overwatch_roles")
         self.notifications = JsonDictSaver(
             "notifications",
-            default={"CAREER_PROFILE_PRIVATE": {}},
+            default={"CAREER_PROFILE_PRIVATE": {}, "AUTOMATIC_ROLES": {}},
         )
 
     async def cog_application_command_check(self, interaction: nextcord.Interaction):
@@ -263,6 +263,7 @@ class AccountLinker(commands.Cog):
                 self.overwatch_roles.save()
 
         self.update_overwatch_roles.start()
+        self.remind_about_automatic_roles.start()
 
     async def assign_overwatch_roles(
         self, member: nextcord.Member, platform: str, region: str, account_name: str
@@ -466,8 +467,47 @@ class AccountLinker(commands.Cog):
 
         self.update_overwatch_roles.restart()
 
-    @nextcord.user_command("Overwatch Profile", dm_permission=False)
-    async def see_overwatch_profile(
+    @tasks.loop(hours=24)
+    async def remind_about_automatic_roles(self):
+        home_guild = await GetOrFetch.guild(
+            self.bot, CONFIG["GENERAL"]["HOME_SERVER_ID"]
+        )
+        if home_guild:
+            get_roles_channel = await GetOrFetch.channel(
+                home_guild, CONFIG["ACCOUNT_LINKER"]["MENU_CHANNEL_ID"]
+            )
+            if isinstance(get_roles_channel, nextcord.TextChannel):
+                today = datetime.datetime.utcnow()
+
+                for m in home_guild.members:
+                    if m.id not in self.accounts and not m.bot:
+                        if (
+                            m.id in self.notifications["AUTOMATIC_ROLES"]
+                            and today - self.notifications["AUTOMATIC_ROLES"][m.id]
+                            > datetime.timedelta(days=14)
+                        ) or m.id not in self.notifications["AUTOMATIC_ROLES"]:
+                            try:
+                                await m.send(
+                                    "Hello dear Human,\n\n"
+                                    "this is just a friendly reminder that you havent setup the automatic roles feature yet.\n"
+                                    "These are the Roles that show your most played Hero, the top 3 played ones after that, and which role you prefer.\n\n"
+                                    "This is not required, but its neat and it would be neat if you can take the time to do this.\n\n"
+                                    f"Go to {get_roles_channel.mention} for more info and a step by step guide. It will only take a few minutes."
+                                )
+                                self.notifications["AUTOMATIC_ROLES"][
+                                    m.id
+                                ] = today.isoformat()
+                                self.notifications.save()
+                            except:
+                                pass
+
+    @remind_about_automatic_roles.error
+    async def restart_remind_about_automatic_roles(self, *args):
+        await asyncio.sleep(10)
+
+        self.remind_about_automatic_roles.restart()
+
+    async def show_overwatch_profile(
         self, interaction: nextcord.Interaction, member: nextcord.Member
     ):
         if member.id not in self.accounts:
@@ -483,6 +523,18 @@ class AccountLinker(commands.Cog):
             f"{account_name}'s Profile with all Stats: https://overwatch.blizzard.com/en-us/career/{account_name.replace('#', '-')}/",
             ephemeral=True,
         )
+
+    @nextcord.user_command("Overwatch Profile", dm_permission=False)
+    async def user_see_overwatch_profile(
+        self, interaction: nextcord.Interaction, member: nextcord.Member
+    ):
+        await self.show_overwatch_profile(interaction, member)
+
+    @nextcord.message_command("Overwatch Profile", dm_permission=False)
+    async def message_see_overwatch_profile(
+        self, interaction: nextcord.Interaction, msg: nextcord.Message
+    ):
+        await self.show_overwatch_profile(interaction, msg.author)  # type: ignore
 
     @nextcord.slash_command(
         "clean-overwatch-roles",
