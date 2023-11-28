@@ -279,14 +279,14 @@ class AccountLinker(commands.Cog):
                 return False
 
             data = await resp.json()
+            if "private" not in data:
+                return False
+
             if data["private"]:
                 today = datetime.datetime.utcnow()
                 if (
                     member.id in self.notifications["CAREER_PROFILE_PRIVATE"]
-                    and today
-                    - datetime.datetime.fromisoformat(
-                        self.notifications["CAREER_PROFILE_PRIVATE"][member.id]
-                    )
+                    and today - self.notifications["CAREER_PROFILE_PRIVATE"][member.id]
                     > datetime.timedelta(days=3)
                 ) or member.id not in self.notifications["CAREER_PROFILE_PRIVATE"]:
                     try:
@@ -296,7 +296,9 @@ class AccountLinker(commands.Cog):
                             "Please make it public again,"
                             " or ask Aki to remove your data from my database so that i wont try to do this again."
                         )
-                        self.notifications["CAREER_PROFILE_PRIVATE"][member.id] = today.isoformat()
+                        self.notifications["CAREER_PROFILE_PRIVATE"][
+                            member.id
+                        ] = today.isoformat()
                         self.notifications.save()
                     except:
                         pass
