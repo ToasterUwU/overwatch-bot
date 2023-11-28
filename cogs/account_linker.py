@@ -469,7 +469,37 @@ class AccountLinker(commands.Cog):
 
     @tasks.loop(hours=24)
     async def remind_about_automatic_roles(self):
-        pass
+        home_guild = await GetOrFetch.guild(
+            self.bot, CONFIG["GENERAL"]["HOME_SERVER_ID"]
+        )
+        if home_guild:
+            get_roles_channel = await GetOrFetch.channel(
+                home_guild, CONFIG["ACCOUNT_LINKER"]["MENU_CHANNEL_ID"]
+            )
+            if isinstance(get_roles_channel, nextcord.TextChannel):
+                today = datetime.datetime.utcnow()
+
+                for m in home_guild.members:
+                    if m.id not in self.accounts and not m.bot:
+                        if (
+                            m.id in self.notifications["AUTOMATIC_ROLES"]
+                            and today - self.notifications["AUTOMATIC_ROLES"][m.id]
+                            > datetime.timedelta(days=14)
+                        ) or m.id not in self.notifications["AUTOMATIC_ROLES"]:
+                            try:
+                                await m.send(
+                                    "Hello dear Human,\n\n"
+                                    "this is just a friendly reminder that you havent setup the automatic roles feature yet.\n"
+                                    "These are the Roles that show your most played Hero, the top 3 played ones after that, and which role you prefer.\n\n"
+                                    "This is not required, but its neat and it would be neat if you can take the time to do this.\n\n"
+                                    f"Go to {get_roles_channel.mention} for more info and a step by step guide. It will only take a few minutes."
+                                )
+                                self.notifications["AUTOMATIC_ROLES"][
+                                    m.id
+                                ] = today.isoformat()
+                                self.notifications.save()
+                            except:
+                                pass
 
     @remind_about_automatic_roles.error
     async def restart_remind_about_automatic_roles(self, *args):
