@@ -78,7 +78,7 @@ class AccountLinkModal(nextcord.ui.Modal):
             user_id=interaction.user.id,
             platform=self.platform,
             region=self.region,
-            account_name=self.account_name_input.value,  # type: ignore
+            account_name=self.account_name_input.value.replace(" ", ""),  # type: ignore
         )
 
         text = f"You are now entered as '{self.account_name_input.value}' ( Platform: {PLATFORM_ROUTER_REVERSE[self.platform]}, Region: {REGION_ROUTER_REVERSE[self.region]} ). "
