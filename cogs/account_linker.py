@@ -11,12 +11,7 @@ from internal_tools.configuration import CONFIG, JsonDictSaver
 from internal_tools.discord import *
 from internal_tools.general import error_webhook_send
 
-PLATFORM_ROUTER = {
-    "PC": "pc",
-    "Playstation": "psn",
-    "XBox": "xbl",
-    "Nintendo Switch": "nintendo-switch",
-}
+PLATFORM_ROUTER = {"PC": "pc", "Console": "console"}
 PLATFORM_ROUTER_REVERSE = {v: k for k, v in PLATFORM_ROUTER.items()}
 
 REGION_ROUTER = {
@@ -34,10 +29,9 @@ class HeroClassEnum:
 
 
 class AccountLinkModal(nextcord.ui.Modal):
-    def __init__(self, cog: "AccountLinker", platform: str, region: str):
+    def __init__(self, cog: "AccountLinker", platform: str):
         self.cog = cog
         self.platform = platform
-        self.region = region
 
         super().__init__(
             "Enter your Account name: ",
@@ -77,11 +71,10 @@ class AccountLinkModal(nextcord.ui.Modal):
         success = await self.cog.add_account(
             user_id=interaction.user.id,
             platform=self.platform,
-            region=self.region,
             account_name=self.account_name_input.value.replace(" ", ""),  # type: ignore
         )
 
-        text = f"You are now entered as '{self.account_name_input.value}' ( Platform: {PLATFORM_ROUTER_REVERSE[self.platform]}, Region: {REGION_ROUTER_REVERSE[self.region]} ). "
+        text = f"You are now entered as '{self.account_name_input.value}' ( Platform: {PLATFORM_ROUTER_REVERSE[self.platform]} ). "
         if success:
             text += "Adding your Roles was successful."
         else:
@@ -114,19 +107,6 @@ class AccountLinkMenu(nextcord.ui.View):
         )
         self.add_item(self.platform_select)
 
-        self.region_select = nextcord.ui.StringSelect(
-            placeholder="Region",
-            custom_id="AccountLinkModal:region",
-            row=1,
-            min_values=1,
-            max_values=1,
-            options=[
-                nextcord.SelectOption(label=key, value=val)
-                for key, val in REGION_ROUTER.items()
-            ],
-        )
-        self.add_item(self.region_select)
-
     @nextcord.ui.button(
         label="Link Account Now",
         custom_id="AccountLinkMenu:button",
@@ -139,8 +119,7 @@ class AccountLinkMenu(nextcord.ui.View):
         await interaction.response.send_modal(
             AccountLinkModal(
                 self.cog,
-                platform=self.platform_select.values[0],
-                region=self.region_select.values[0],
+                platform=self.platform_select.values[0]
             )
         )
 
@@ -266,12 +245,12 @@ class AccountLinker(commands.Cog):
         self.remind_about_automatic_roles.start()
 
     async def assign_overwatch_roles(
-        self, member: nextcord.Member, platform: str, region: str, account_name: str
+        self, member: nextcord.Member, platform: str, account_name: str
     ):
         async with aiohttp.ClientSession() as session:
             try:
                 resp = await session.get(
-                    f"https://ow-api.com/v1/stats/{platform}/{region}/{account_name.replace('#', '-')}/complete"
+                    f"http://localhost:8080/stats/{platform}/{account_name.replace('#', '-')}/complete"
                 )
             except:
                 return False
@@ -425,11 +404,10 @@ class AccountLinker(commands.Cog):
             return True
 
     async def add_account(
-        self, user_id: int, platform: str, region: str, account_name: str
+        self, user_id: int, platform: str, account_name: str
     ):
         self.accounts[user_id] = {
             "platform": platform,
-            "region": region,
             "account_name": account_name,
         }
 
@@ -442,7 +420,7 @@ class AccountLinker(commands.Cog):
             member = await GetOrFetch.member(home_guild, user_id)
             if member:
                 return await self.assign_overwatch_roles(
-                    member, platform, region, account_name
+                    member, platform, account_name
                 )
 
         return False
@@ -457,7 +435,7 @@ class AccountLinker(commands.Cog):
                 member = await GetOrFetch.member(home_guild, user_id)
                 if member:
                     await self.assign_overwatch_roles(
-                        member, vals["platform"], vals["region"], vals["account_name"]
+                        member, vals["platform"], vals["account_name"]
                     )
                     await asyncio.sleep(60)
 
