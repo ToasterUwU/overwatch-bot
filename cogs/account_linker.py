@@ -250,7 +250,7 @@ class AccountLinker(commands.Cog):
         async with aiohttp.ClientSession() as session:
             try:
                 resp = await session.get(
-                    f"http://localhost:8080/stats/{platform}/{account_name.replace('#', '-')}/complete"
+                    f"https://ow-api.com/v3/stats/{platform}/{account_name.replace('#', '-')}/complete"
                 )
             except:
                 return False
