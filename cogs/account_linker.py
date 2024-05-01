@@ -259,6 +259,10 @@ class AccountLinker(commands.Cog):
                 return False
 
             data = await resp.json()
+            if "error" in data and data["error"] is not None:
+                await error_webhook_send(f"OVRStat API Error: {data['error']}")
+                return False
+
             if "private" not in data:
                 return False
 
