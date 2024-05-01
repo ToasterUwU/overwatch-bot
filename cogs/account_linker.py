@@ -117,10 +117,7 @@ class AccountLinkMenu(nextcord.ui.View):
         self, button: nextcord.Button, interaction: nextcord.Interaction
     ):
         await interaction.response.send_modal(
-            AccountLinkModal(
-                self.cog,
-                platform=self.platform_select.values[0]
-            )
+            AccountLinkModal(self.cog, platform=self.platform_select.values[0])
         )
 
 
@@ -193,9 +190,9 @@ class AccountLinker(commands.Cog):
                     hoist=True,
                     mentionable=True,
                 )
-                self.overwatch_roles[
-                    "TOP_3_SEPERATOR_ROLE_ID"
-                ] = top_3_seperator_role.id
+                self.overwatch_roles["TOP_3_SEPERATOR_ROLE_ID"] = (
+                    top_3_seperator_role.id
+                )
 
                 # Top 3 Hero roles
                 self.overwatch_roles["HERO_ROLE_IDS"] = {}
@@ -223,9 +220,9 @@ class AccountLinker(commands.Cog):
                     hoist=True,
                     mentionable=True,
                 )
-                self.overwatch_roles[
-                    "OTHER_SEPERATOR_ROLE_ID"
-                ] = other_seperator_role.id
+                self.overwatch_roles["OTHER_SEPERATOR_ROLE_ID"] = (
+                    other_seperator_role.id
+                )
 
                 # Main Class roles
                 self.overwatch_roles["CLASS_ROLE_IDS"] = {}
@@ -260,7 +257,9 @@ class AccountLinker(commands.Cog):
 
             data = await resp.json()
             if "error" in data and data["error"] is not None:
-                await error_webhook_send(f"OVRStat API Error ( https://ow-api.com/v3/stats/{platform}/{account_name.replace('#', '-')}/complete ): {data['error']}")
+                await error_webhook_send(
+                    f"OVRStat API Error ( https://ow-api.com/v3/stats/{platform}/{account_name.replace('#', '-')}/complete ): {data['error']}"
+                )
                 return False
 
             if "private" not in data:
@@ -407,9 +406,7 @@ class AccountLinker(commands.Cog):
 
             return True
 
-    async def add_account(
-        self, user_id: int, platform: str, account_name: str
-    ):
+    async def add_account(self, user_id: int, platform: str, account_name: str):
         self.accounts[user_id] = {
             "platform": platform,
             "account_name": account_name,
@@ -423,9 +420,7 @@ class AccountLinker(commands.Cog):
         if home_guild:
             member = await GetOrFetch.member(home_guild, user_id)
             if member:
-                return await self.assign_overwatch_roles(
-                    member, platform, account_name
-                )
+                return await self.assign_overwatch_roles(member, platform, account_name)
 
         return False
 
