@@ -11,6 +11,11 @@
     "TANK": "#004fc9"
   },
   "HEROES": {
+    "VENTURE": {
+      "COLOR": "#79614e",
+      "CLASS": "DPS",
+      "API_NAME": "venture"
+    },
     "MAUGA": {
       "COLOR": "#b57015",
       "CLASS": "TANK",
