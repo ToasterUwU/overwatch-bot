@@ -11,6 +11,11 @@
     "TANK": "#004fc9"
   },
   "HEROES": {
+    "JUNO": {
+      "COLOR": "#804be5",
+      "CLASS": "SUPPORT",
+      "API_NAME": "juno"
+    },
     "VENTURE": {
       "COLOR": "#79614e",
       "CLASS": "DPS",
