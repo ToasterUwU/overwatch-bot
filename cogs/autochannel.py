@@ -2,7 +2,7 @@ import datetime
 from typing import Dict, Union
 
 import nextcord
-from discord import PermissionOverwrite
+from nextcord import PermissionOverwrite
 from nextcord.ext import commands, tasks
 
 from internal_tools.configuration import CONFIG

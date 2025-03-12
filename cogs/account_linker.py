@@ -55,6 +55,9 @@ class AccountLinkModal(nextcord.ui.Modal):
             )
             return
 
+        if self.account_name_input.value is None:
+            raise Exception("No value given, cant proceed")
+
         if (
             self.account_name_input.value.count("#") != 1
             or not self.account_name_input.value.split("#")[1].isnumeric()
