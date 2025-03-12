@@ -55,7 +55,10 @@ class AccountLinkModal(nextcord.ui.Modal):
             )
             return
 
-        if self.account_name_input.value.count("#") != 1 or not self.account_name_input.value.split("#")[1].isnumeric():  # type: ignore
+        if (
+            self.account_name_input.value.count("#") != 1
+            or not self.account_name_input.value.split("#")[1].isnumeric()
+        ):  # type: ignore
             await interaction.send(
                 "You forgot to add the # + numbers part, or you put too many of them.\n"
                 "Enter your full name, make sure the capitalization is right and that you include all numbers.\n\n"
@@ -279,9 +282,9 @@ class AccountLinker(commands.Cog):
                             "Please make it public again,"
                             " or ask Aki to remove your data from my database so that i wont try to do this again."
                         )
-                        self.notifications["CAREER_PROFILE_PRIVATE"][
-                            member.id
-                        ] = today.isoformat()
+                        self.notifications["CAREER_PROFILE_PRIVATE"][member.id] = (
+                            today.isoformat()
+                        )
                         self.notifications.save()
                     except:
                         pass
@@ -471,9 +474,9 @@ class AccountLinker(commands.Cog):
                                     "This is not required, but its neat and it would be neat if you can take the time to do this.\n\n"
                                     f"Go to {get_roles_channel.mention} for more info and a step by step guide. It will only take a few minutes."
                                 )
-                                self.notifications["AUTOMATIC_ROLES"][
-                                    m.id
-                                ] = today.isoformat()
+                                self.notifications["AUTOMATIC_ROLES"][m.id] = (
+                                    today.isoformat()
+                                )
                                 self.notifications.save()
                             except:
                                 pass
@@ -501,13 +504,19 @@ class AccountLinker(commands.Cog):
             ephemeral=True,
         )
 
-    @nextcord.user_command("Overwatch Profile", dm_permission=False)
+    @nextcord.user_command(
+        "Overwatch Profile",
+        contexts=[nextcord.InteractionContextType.guild],
+    )
     async def user_see_overwatch_profile(
         self, interaction: nextcord.Interaction, member: nextcord.Member
     ):
         await self.show_overwatch_profile(interaction, member)
 
-    @nextcord.message_command("Overwatch Profile", dm_permission=False)
+    @nextcord.message_command(
+        "Overwatch Profile",
+        contexts=[nextcord.InteractionContextType.guild],
+    )
     async def message_see_overwatch_profile(
         self, interaction: nextcord.Interaction, msg: nextcord.Message
     ):
@@ -516,7 +525,7 @@ class AccountLinker(commands.Cog):
     @nextcord.slash_command(
         "clean-overwatch-roles",
         default_member_permissions=nextcord.Permissions(administrator=True),
-        dm_permission=False,
+        contexts=[nextcord.InteractionContextType.guild],
     )
     async def clean_overwatch_roles(self, interaction: nextcord.Interaction):
         await interaction.response.defer(ephemeral=True)
