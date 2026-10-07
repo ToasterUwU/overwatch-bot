@@ -1,4 +1,5 @@
 {
+  "OVERFAST_API_URL": "https://overfast-api.tekrop.fr",
   "MENU_CHANNEL_ID": 1119247951844343899,
   "SEPERATOR_ROLE_COLOR": "#2c2f33",
   "SEPERATOR_ROLE_NAMES": {
@@ -12,7 +13,7 @@
   },
   "HEROES": {
     "JUNO": {
-      "COLOR": "#804be5",
+      "COLOR": "#721fa3",
       "CLASS": "SUPPORT",
       "API_NAME": "juno"
     },
@@ -22,12 +23,12 @@
       "API_NAME": "venture"
     },
     "MAUGA": {
-      "COLOR": "#b57015",
+      "COLOR": "#db4216",
       "CLASS": "TANK",
       "API_NAME": "mauga"
     },
     "ILLARI": {
-      "COLOR": "#94682e",
+      "COLOR": "#a58c54",
       "CLASS": "SUPPORT",
       "API_NAME": "illari"
     },
@@ -49,10 +50,10 @@
     "D.VA": {
       "COLOR": "#fc79bd",
       "CLASS": "TANK",
-      "API_NAME": "dVa"
+      "API_NAME": "dva"
     },
     "DOOMFIST": {
-      "COLOR": "#815049",
+      "COLOR": "#661e0f",
       "CLASS": "TANK",
       "API_NAME": "doomfist"
     },
@@ -87,7 +88,7 @@
       "API_NAME": "mei"
     },
     "MERCY": {
-      "COLOR": "#f2f2ad",
+      "COLOR": "#faf2ad",
       "CLASS": "SUPPORT",
       "API_NAME": "mercy"
     },
@@ -124,11 +125,11 @@
     "SOLDIER: 76": {
       "COLOR": "#445275",
       "CLASS": "DPS",
-      "API_NAME": "soldier76"
+      "API_NAME": "soldier-76"
     },
     "SOMBRA": {
       "COLOR": "#5128a9",
-      "CLASS": "DPS",
+      "CLASS": "SUPPORT",
       "API_NAME": "sombra"
     },
     "SYMMETRA": {
@@ -204,7 +205,7 @@
     "JUNKER QUEEN": {
       "COLOR": "#579fcf",
       "CLASS": "TANK",
-      "API_NAME": "junkerQueen"
+      "API_NAME": "junker-queen"
     },
     "SIGMA": {
       "COLOR": "#7c8b8c",
@@ -214,7 +215,72 @@
     "WRECKING BALL": {
       "COLOR": "#e2790a",
       "CLASS": "TANK",
-      "API_NAME": "wreckingBall"
+      "API_NAME": "wrecking-ball"
+    },
+    "ANRAN": {
+      "COLOR": "#e81a05",
+      "CLASS": "DPS",
+      "API_NAME": "anran"
+    },
+    "D.MON": {
+      "COLOR": "#c5382b",
+      "CLASS": "TANK",
+      "API_NAME": "dmon"
+    },
+    "DOCTRINE": {
+      "COLOR": "#991344",
+      "CLASS": "SUPPORT",
+      "API_NAME": "doctrine"
+    },
+    "DOMINA": {
+      "COLOR": "#69deef",
+      "CLASS": "TANK",
+      "API_NAME": "domina"
+    },
+    "EMRE": {
+      "COLOR": "#c70c0c",
+      "CLASS": "DPS",
+      "API_NAME": "emre"
+    },
+    "FREJA": {
+      "COLOR": "#3f93ff",
+      "CLASS": "DPS",
+      "API_NAME": "freja"
+    },
+    "HAZARD": {
+      "COLOR": "#985ec0",
+      "CLASS": "TANK",
+      "API_NAME": "hazard"
+    },
+    "JETPACK CAT": {
+      "COLOR": "#c9cdd1",
+      "CLASS": "SUPPORT",
+      "API_NAME": "jetpack-cat"
+    },
+    "MIZUKI": {
+      "COLOR": "#9affc7",
+      "CLASS": "SUPPORT",
+      "API_NAME": "mizuki"
+    },
+    "SHION": {
+      "COLOR": "#f6f6f6",
+      "CLASS": "DPS",
+      "API_NAME": "shion"
+    },
+    "SIERRA": {
+      "COLOR": "#fe8da8",
+      "CLASS": "DPS",
+      "API_NAME": "sierra"
+    },
+    "VENDETTA": {
+      "COLOR": "#961a1c",
+      "CLASS": "DPS",
+      "API_NAME": "vendetta"
+    },
+    "WUYANG": {
+      "COLOR": "#4c7fef",
+      "CLASS": "SUPPORT",
+      "API_NAME": "wuyang"
     }
   }
 }

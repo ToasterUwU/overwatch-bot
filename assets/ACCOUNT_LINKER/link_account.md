@@ -10,10 +10,9 @@ I attached an example Screenshot.
 
 ## Telling the Bot who you are
 
-1. Select the Platform you play on from the first Dropdown
-2. Press the Button
-3. Enter your name in the Popup window (With #, numbers, and correct capitalization, you cannot use the name shown in the game itself, that one is always all uppercase, like TOASTERUWU, even tho my name is ToasterUwU. Use the one from the battle.net launcher or the battle.net website)
-4. Press the Popup windows button to confirm
+1. Press the "Link Account Now" Button below
+2. Enter your name in the Popup window (With #, numbers, and correct capitalization, you cannot use the name shown in the game itself, that one is always all uppercase, like TOASTERUWU, even tho my name is ToasterUwU. Use the one from the battle.net launcher or the battle.net website)
+3. Press the Popup windows button to confirm
 
 # What are the automatic Overwatch Roles?
 
